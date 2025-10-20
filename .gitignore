@@ -1,0 +1,22 @@
+# Ignore environment variable secrets
+.env
+# Python virtual environment
+.venv/
+venv/
+
+# Generated data and models
+if_statement_project/
+
+# IDE and editor directories
+.idea/
+.vscode/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# System files
+.DS_Store

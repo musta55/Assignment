@@ -1,0 +1,9 @@
+torch
+requests
+tqdm
+numpy
+matplotlib
+editdistance>=0.6.0
+sentencepiece
+parso
+tokenizers
