@@ -1,11 +1,10 @@
 Transformer Model for If-Statement Prediction
 A complete implementation of a Transformer-based model that predicts if-statement conditions in Python code using pre-training and fine-tuning.
-🎯 Project Goals
 
 Pre-train a Transformer model on Python code using Masked Language Modeling (MLM)
 Fine-tune the model to predict if-statement conditions
 
-📋 Requirements
+Requirements
 Dataset Requirements
 
 Pre-training: ≥150,000 instances
@@ -20,7 +19,7 @@ CUDA-capable GPU (8GB+ VRAM recommended)
 Git (for cloning repositories)
 GitHub account (optional but recommended for higher API rate limits)
 
-🚀 Quick Start
+Quick Start
 1. Installation
 bash# Clone the repository
 git clone <your-repo-url>
@@ -98,7 +97,7 @@ project/
     ├── evaluation_results.json
     ├── pretraining_curves.png
     └── finetuning_curves.png
-🔧 Configuration Options
+Configuration Options
 Data Collection
 
 --num-repos: Number of repositories to process (default: 500)
@@ -149,7 +148,7 @@ Syntax Validity: >90%
 
 
 
-🎓 Design Decisions Explained
+Design Decisions Explained
 1. Why GitHub API Instead of SEART?
 
 Easier access: Using Github Repository for Source Code
@@ -181,7 +180,7 @@ Fine-tuning: Specialize for if-condition prediction
 Transfer learning: Leverages unlabeled code effectively
 Better performance: Pre-training provides strong foundation
 
-🐛 Troubleshooting
+ Troubleshooting
 Out of Memory (OOM) Errors
 bash# Reduce batch size
 python main.py --batch-size 16
@@ -203,12 +202,13 @@ CUDA Not Available
 python# The code automatically falls back to CPU
 # But training will be much slower (50-100x)
 # Consider using Google Colab with free GPU
-📈 Monitoring Training
+Monitoring Training
 Training Progress
 The training scripts output real-time progress:
 Pre-training: 100%|████████| 4688/4688 [1:23:45<00:00, loss=2.87, lr=0.0001]
 Train Loss: 2.8732, Val Loss: 2.9145
-✓ Checkpoint saved to best_pretrain_model.pt
+
+Checkpoint saved to best_pretrain_model.pt
 Visualize Curves
 Training and validation curves are automatically saved:
 bash# View training curves
@@ -220,7 +220,8 @@ from torch.utils.tensorboard import SummaryWriter
 writer = SummaryWriter('runs/experiment_1')
 writer.add_scalar('Loss/train', train_loss, epoch)
 Then run: tensorboard --logdir=runs
-🧪 Testing Your Model
+
+Testing Your Model
 Quick Test
 pythonfrom evaluation_script import IfStatementPredictor
 from tokenizer_training import PythonCodeTokenizer
@@ -258,7 +259,7 @@ metrics, predictions = evaluate_model(
     test_data_path="your_custom_test.json",
     tokenizer_path="python_tokenizer.pkl"
 )
-📝 Creating Your Own Test Cases
+Creating Your Own Test Cases
 pythontest_cases = [
     {
         "input": "def is_even(n):\n    if [IF_MASK]:\n        return True\n    return False",
