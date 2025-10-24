@@ -4,12 +4,6 @@
 # In[ ]:
 
 
-print("Hello, World2!")
-
-
-# In[ ]:
-
-
 import os
 import requests
 import pandas as pd
@@ -31,15 +25,14 @@ from transformers import (
     DataCollatorForLanguageModeling,
 )
 
-# --- 1. CONFIGURATION ---
-# IMPORTANT: Replace with your actual GitHub Personal Access Token
-GITHUB_API_KEY = os.getenv("GITHUB_API_KEY")
+# 1. CONFIGURATION
 
-PRETRAIN_TARGET_SIZE = 150000   # Minimum required
-FINETUNE_TARGET_SIZE = 50000    # Minimum required
-NUM_REPOS_TO_FETCH = 20        # More repos for diversity
-MIN_FUNCTION_TOKENS = 20       # Filter trivial functions
-TOKENIZER_VOCAB_SIZE = 20000    # Adequate for code
+GITHUB_API_KEY = os.getenv("GITHUB_API_KEY")
+PRETRAIN_TARGET_SIZE = 150000   
+FINETUNE_TARGET_SIZE = 50000    
+NUM_REPOS_TO_FETCH = 20       
+MIN_FUNCTION_TOKENS = 20      
+TOKENIZER_VOCAB_SIZE = 20000
 MAX_TRAIN_EPOCHS_PRETRAIN = 3
 MAX_TRAIN_EPOCHS_FINETUNE = 5
 BATCH_SIZE = 1
@@ -51,7 +44,6 @@ SAVE_STEPS = 2000
 
 MASK_TOKEN = "<extra_id_0>"
 
-# --- File and Directory Paths ---
 DATA_ROOT = Path("./if_statement_project")
 RAW_CODE_DIR = DATA_ROOT / "raw_code"
 TOKENIZER_PATH = DATA_ROOT / "python_tokenizer.json"
@@ -65,11 +57,10 @@ PRETRAINED_MODEL_DIR = DATA_ROOT / "pretrained_t5"
 FINETUNED_MODEL_DIR = DATA_ROOT / "finetuned_if_model"
 PROVIDED_TESTSET_PATH = DATA_ROOT / "provided_testset_to_process.csv"
 
-# --- Create Directories ---
 DATA_ROOT.mkdir(exist_ok=True)
 RAW_CODE_DIR.mkdir(exist_ok=True)
 
-# --- 2. DATA COLLECTION & PROCESSING ---
+# 2. DATA COLLECTION & PROCESSING
 
 def get_popular_python_repos(n=NUM_REPOS_TO_FETCH):
     """Fetches the most starred Python repositories from GitHub."""
@@ -363,85 +354,7 @@ def run_training(is_pretraining):
         traceback.print_exc()
         raise
 
-# --- 6. EVALUATION ---
-
-def load_provided_test_set(file_path):
-    """Loads and parses the provided test CSV with specific format."""
-    df = pd.read_csv(file_path)
-    # The provided CSV has columns: id,code,code_tokens,docstring,docstring_tokens
-    return df['code'].tolist()
-
-def evaluate_and_create_csv(model, tokenizer, test_data, output_filename):
-    """Runs model predictions and saves results to a CSV file."""
-    print(f"Evaluating and creating {output_filename}...")
-    
-    results = []
-    device = "cuda"
-    model.to(device)
-    if_regex = re.compile(r'if\s+(.+?):')
-
-    for code in tqdm(test_data, desc=f"Predicting for {output_filename}"):
-        matches = list(if_regex.finditer(code))
-        if not matches:
-            continue
-        
-        # STRATEGY: For functions with multiple if statements, 
-        # we evaluate the FIRST one for consistency
-        # Alternative: Could evaluate all and create multiple rows
-        match = matches[0]
-        expected_condition = match.group(1).strip()
-        
-        input_code = code[:match.start(1)] + MASK_TOKEN + code[match.end(1):]
-        
-        prefix = "complete the python code: "
-        inputs = tokenizer(
-            prefix + input_code,
-            return_tensors="pt",
-            return_token_type_ids=False,
-            max_length=MAX_SEQ_LENGTH,
-            truncation=True,
-        )
-        inputs = {k: v.to(device) for k, v in inputs.items() if k in ["input_ids", "attention_mask"]}
-
-        
-        with torch.no_grad():
-            output = model.generate(
-                input_ids=inputs["input_ids"],
-                attention_mask=inputs["attention_mask"],
-                max_length=MAX_TARGET_LENGTH,
-                num_beams=5,
-                early_stopping=True,
-                output_scores=True,
-                return_dict_in_generate=True
-            )
-
-        
-        predicted_condition = tokenizer.decode(output.sequences[0], skip_special_tokens=True)
-        
-        seq_log_prob = output.sequences_scores[0].item()
-        score = min(100.0, max(0.0, (torch.exp(torch.tensor(seq_log_prob)).item()) * 100))
-
-        results.append({
-            "Input provided to the model": input_code,
-            "Whether the prediction is correct": predicted_condition.strip() == expected_condition,
-            "Expected if condition": expected_condition,
-            "Predicted if condition": predicted_condition,
-            "Prediction score (0-100)": round(score, 2)
-        })
-
-    if not results:
-        print(f"WARNING: No valid test cases found for {output_filename}")
-        return
-    
-    pd.DataFrame(results).to_csv(output_filename, index=False)
-    print(f"Successfully saved {len(results)} results to {output_filename}")
-    
-    # Print accuracy summary
-    correct = sum(1 for r in results if r["Whether the prediction is correct"])
-    accuracy = (correct / len(results)) * 100
-    print(f"  Accuracy: {accuracy:.2f}% ({correct}/{len(results)})")
-
-# --- 7. MAIN EXECUTION ---
+# --- 7. MAIN EXECUTION (Steps 1-5) ---
 if __name__ == '__main__':
     
     print(f"\nConfiguration:")
@@ -493,7 +406,7 @@ if __name__ == '__main__':
     if not (FINETUNED_MODEL_DIR / "pytorch_model.bin").exists():
         run_training(is_pretraining=False)
     
-  
+    print("\n--- Steps 1-5 Complete. Run next cell for evaluation. ---")
 
 
 # In[ ]:
@@ -527,6 +440,7 @@ def evaluate_and_create_csv(model, tokenizer, test_data, output_filename):
         input_code = code[:match.start(1)] + MASK_TOKEN + code[match.end(1):]
         prefix = "complete the python code: "
 
+        # FIX: Stop returning token_type_ids which T5 doesn't support
         inputs = tokenizer(
             prefix + input_code,
             return_tensors="pt",
@@ -595,61 +509,4 @@ if __name__ == '__main__':
         print(f"Warning: Provided test set missing at '{PROVIDED_TESTSET_PATH}' — skipping evaluation.")
 
     print("\n--- PIPELINE COMPLETE ---")
-
-
-# In[ ]:
-
-
-def evaluate_and_create_csv(model, tokenizer, test_data, output_filename):
-    """Runs model predictions and saves results to a CSV file."""
-    print(f"Evaluating and creating {output_filename}...")
-    results = []
-    device = "cuda"
-    model.to(device)
-    if_regex = re.compile(r'if\s+(.+?):')
-
-    for code in tqdm(test_data, desc=f"Predicting for {output_filename}"):
-        matches = list(if_regex.finditer(code))
-        if not matches:
-            continue
-
-        match = matches[0]
-        expected_condition = match.group(1).strip()
-        input_code = code[:match.start(1)] + MASK_TOKEN + code[match.end(1):]
-
-        prefix = "complete the python code: "
-        # FIX: disable token_type_ids
-        inputs = tokenizer(
-            prefix + input_code,
-            return_tensors="pt",
-            return_token_type_ids=False,  # <-- Stop adding unused key
-            max_length=256,
-            truncation=True
-        ).to(device)
-
-        with torch.no_grad():
-            output = model.generate(
-                input_ids=inputs["input_ids"],        # <-- use only valid keys
-                attention_mask=inputs["attention_mask"],
-                max_length=128,
-                num_beams=5,
-                early_stopping=True,
-                output_scores=True,
-                return_dict_in_generate=True
-            )
-
-        predicted_condition = tokenizer.decode(output.sequences[0], skip_special_tokens=True)
-        seq_log_prob = output.sequences_scores[0].item()
-        score = (torch.exp(torch.tensor(seq_log_prob)).item()) * 100
-
-        results.append({
-            "Input provided to the model": input_code,
-            "Whether the prediction is correct": predicted_condition == expected_condition,
-            "Expected if condition": expected_condition,
-            "Predicted if condition": predicted_condition,
-            "Prediction score (0-100)": score
-        })
-
-    pd.DataFrame(results).to_csv(output_filename, index=False)
-    print(f"Successfully saved results to {output_filename}")
 
