@@ -4,8 +4,6 @@ A complete implementation of a Transformer-based model that predicts if-statemen
 
 Pre-train a Transformer model on Python code using Masked Language Modeling (MLM)
 Fine-tune the model to predict if-statement conditions
-Use custom-trained tokenizer (no pre-trained tokenizers allowed)
-Achieve high accuracy on if-condition prediction
 
 📋 Requirements
 Dataset Requirements
@@ -126,7 +124,7 @@ Training
 --batch-size: Batch size (default: 32)
 Learning rate: Auto-scheduled with warmup
 
-📊 Expected Results
+Expected Results
 Data Collection
 
 Target: 500 repositories
@@ -154,16 +152,12 @@ Syntax Validity: >90%
 🎓 Design Decisions Explained
 1. Why GitHub API Instead of SEART?
 
-Easier access: No registration required
-Better control: Fine-grained search queries
-Diversity: Topic-based search ensures varied code patterns
+Easier access: Using Github Repository for Source Code
 Rate limits: 5000 req/hour with token (sufficient)
 
-2. Why Custom Tokenizer?
+2. Why Custom BPE Tokenizer?
 
-Project requirement: No pre-trained tokenizers allowed
-Domain-specific: Learns Python code patterns
-Efficiency: BPE balances vocabulary size and coverage
+Using BPE balances vocabulary size and coverage
 Task-specific tokens: Can define [IF_MASK] token
 
 3. Why T5-style Architecture?
@@ -278,23 +272,7 @@ pythontest_cases = [
 
 import json
 with open("my_test_cases.json", 'w') as f:
-    json.dump(test_cases, f, indent=2)
-🎯 Performance Tips
-Improve Accuracy
-
-More data: Collect from 1000+ repositories
-Better filtering: Stricter quality criteria
-Longer training: More epochs if not overfitting
-Larger model: Increase d_model to 768
-Data augmentation: Create variations of if conditions
-
-Faster Training
-
-Mixed precision: Use torch.cuda.amp
-Gradient accumulation: Effective larger batch size
-Multiple GPUs: Distributed training
-Efficient data loading: Increase num_workers
-Compile model: torch.compile() (PyTorch 2.0+)
+    json.dump(test_cases, f, indent=2)s
 
 Reduce Memory
 
@@ -303,7 +281,7 @@ Gradient checkpointing: Trade compute for memory
 Smaller model: Reduce layers/dimensions
 Shorter sequences: Reduce max_len to 256
 
-🔬 Advanced Usage
+Advanced Usage
 Resume Training
 python# In training_script.py, add:
 if Path("checkpoint.pt").exists():
@@ -324,4 +302,6 @@ pythonfor lr in [1e-4, 5e-5, 1e-5]:
     for batch_size in [16, 32, 64]:
         # Train with different configs
         # Track results in a table
+
+GPU Uasge: William and Mary CS CLuster
 AI Generated
