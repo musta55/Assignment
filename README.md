@@ -324,3 +324,4 @@ pythonfor lr in [1e-4, 5e-5, 1e-5]:
     for batch_size in [16, 32, 64]:
         # Train with different configs
         # Track results in a table
+AI Generated
