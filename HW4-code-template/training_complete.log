@@ -1,0 +1,50 @@
+nohup: ignoring input
+device:  cuda:0
+***** load glove embedding now...****
+*****************************************************************************************
+start model training now
+*****************************************************************************************
+Epoch [1/15], Average Loss: 0.5651
+**** save checkpoint ****
+Epoch [2/15], Average Loss: 0.3589
+**** save checkpoint ****
+Epoch [3/15], Average Loss: 0.2790
+**** save checkpoint ****
+Epoch [4/15], Average Loss: 0.2062
+**** save checkpoint ****
+Epoch [5/15], Average Loss: 0.1554
+**** save checkpoint ****
+Epoch [6/15], Average Loss: 0.1087
+**** save checkpoint ****
+Epoch [7/15], Average Loss: 0.0782
+**** save checkpoint ****
+Epoch [8/15], Average Loss: 0.0568
+**** save checkpoint ****
+Epoch [9/15], Average Loss: 0.0428
+**** save checkpoint ****
+Epoch [10/15], Average Loss: 0.0416
+**** save checkpoint ****
+Epoch [11/15], Average Loss: 0.0304
+**** save checkpoint ****
+Epoch [12/15], Average Loss: 0.0218
+**** save checkpoint ****
+Epoch [13/15], Average Loss: 0.0192
+**** save checkpoint ****
+Epoch [14/15], Average Loss: 0.0145
+**** save checkpoint ****
+Epoch [15/15], Average Loss: 0.0116
+**** save checkpoint ****
+----model testing now----
+Test Accuracy: 80.60%
+Correct: 8060/10000
+
+Confusion Matrix:
+True Positive: 3590
+True Negative: 4470
+False Positive: 590
+False Negative: 1350
+
+Precision: 0.8589
+Recall: 0.7267
+F1 Score: 0.7873
+running time:  0.7140539407730102 mins

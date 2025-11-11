@@ -7,6 +7,13 @@ venv/
 # Generated data and models
 if_statement_project/
 
+# Output files
+*.log
+training_output.log
+*-testset.csv
+*-testset-*.csv
+*.csv
+
 # IDE and editor directories
 .idea/
 .vscode/
@@ -19,4 +26,6 @@ __pycache__/
 *.pyc
 
 # System files
-.DS_Store
+.DS_StoreGlove-embedding/glove.6B.zip
+# Large files (download separately)
+Glove-embedding/*.zip

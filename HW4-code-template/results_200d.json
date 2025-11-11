@@ -1,0 +1,39 @@
+{
+    "embedding_dim": 200,
+    "accuracy": 82.40,
+    "precision": 83.60,
+    "recall": 80.08,
+    "f1_score": 81.80,
+    "confusion_matrix": {
+        "TP": 3956,
+        "TN": 4284,
+        "FP": 776,
+        "FN": 984
+    },
+    "loss_history": [
+        0.5549,
+        0.3367,
+        0.2592,
+        0.1903,
+        0.1476,
+        0.1093,
+        0.0769,
+        0.0564,
+        0.0426,
+        0.0319,
+        0.0333,
+        0.0270,
+        0.0199,
+        0.0165,
+        0.0133
+    ],
+    "hyperparameters": {
+        "n_layers": 2,
+        "hidden_dim": 128,
+        "embedding_dim": 200,
+        "batch_size": 256,
+        "learning_rate": 0.002,
+        "num_epochs": 15,
+        "sequence_length": 150
+    }
+}
